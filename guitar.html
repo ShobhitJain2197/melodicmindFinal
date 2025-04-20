@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🎸 Guitar - MelodicMind</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="dark">
+
+    <h2>🎸 Guitar Module</h2>
+    <p class="subtitle">Select a song to practice with chords</p>
+
+    <div class="song-list">
+        {% for song in songs %}
+            <a class="song-card" href="/song/{{ song.filename }}">
+                <img src="{{ song.image }}" alt="{{ song.artist }}" class="artist-thumb">
+                <div class="song-info">
+                    <h3>{{ song.title }}</h3>
+                    <p class="artist">{{ song.artist }}</p>
+                    <p class="year">{{ song.year }}</p>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+
+    <footer>Created by <strong>SHOBHIT JAIN</strong></footer>
+
+</body>
+</html>

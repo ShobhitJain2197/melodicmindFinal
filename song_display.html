@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ song_name }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        #lyrics {
+            max-height: 80vh;
+            overflow-y: auto;
+            background: #111;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        pre {
+            margin: 0;
+            line-height: 1.6;
+            font-family: monospace;
+            color: #fff;
+        }
+        #controls {
+            margin: 20px 0;
+            text-align: center;
+        }
+        #scroll-indicator {
+            color: lime;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        .toggle-btn {
+            padding: 10px 25px;
+            font-size: 15px;
+            font-weight: bold;
+            background: #444;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle-btn.active {
+            background: #28a745;
+        }
+    </style>
+</head>
+<body class="dark">
+    <h2>{{ song_name }}</h2>
+    <p class="subtitle">Play chords and scroll lyrics automatically!</p>
+
+    <div id="controls">
+        <button class="toggle-btn" id="toggleBtn">🎧 Start Listening</button>
+        <div id="scroll-indicator"></div>
+    </div>
+
+    <div id="lyrics">
+        {% for line in lines %}
+            <pre>{{ line }}</pre>
+        {% endfor %}
+    </div>
+
+    <footer>Created by <strong>SHOBHIT JAIN</strong></footer>
+
+    <!-- ✅ Auto-scroll JS with toggle -->
+    <script>
+        let currentLine = 0;
+        let pollingActive = false;
+        let interval = null;
+
+        const toggleBtn = document.getElementById("toggleBtn");
+        const scrollIndicator = document.getElementById("scroll-indicator");
+
+        toggleBtn.addEventListener("click", () => {
+            pollingActive = !pollingActive;
+
+            if (pollingActive) {
+                toggleBtn.textContent = "🛑 Stop Listening";
+                toggleBtn.classList.add("active");
+                scrollIndicator.textContent = "🎧 Listening for chords...";
+                interval = setInterval(scrollLyrics, 2000);
+            } else {
+                toggleBtn.textContent = "🎧 Start Listening";
+                toggleBtn.classList.remove("active");
+                scrollIndicator.textContent = "Paused";
+                clearInterval(interval);
+            }
+        });
+
+        function scrollLyrics() {
+            fetch('/listen')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.scroll) {
+                        const lines = document.querySelectorAll('#lyrics pre');
+                        if (currentLine < lines.length) {
+                            lines[currentLine].scrollIntoView({ behavior: 'auto', block: 'start' });
+                            scrollIndicator.textContent = `✅ Scrolled line ${currentLine + 1}`;
+                            currentLine++;
+                        } else {
+                            scrollIndicator.textContent = "✅ End of lyrics.";
+                        }
+                    }
+                })
+                .catch(err => {
+                    scrollIndicator.textContent = "❌ Error contacting backend.";
+                    console.error(err);
+                });
+        }
+    </script>
+</body>
+</html>
