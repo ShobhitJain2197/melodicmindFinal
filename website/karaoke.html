@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Karaoke Songs</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="dark">
+    <h2>🎤 Karaoke Sing Along</h2>
+    <p class="subtitle">Choose a song to sing along with scrolling lyrics</p>
+
+    <div class="song-list">
+        {% for song in songs %}
+        <a class="song-card" href="/karaoke/{{ song }}">
+            <div class="song-info">
+                <h3>{{ song.replace('.txt', '').replace('_', ' ').title() }}</h3>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    <footer>Created by <strong>SHOBHIT JAIN</strong></footer>
+</body>
+</html>
